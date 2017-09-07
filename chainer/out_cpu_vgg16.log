@@ -1,0 +1,5 @@
+vgg16
+Average Forward:   5327.71623134613  ms
+Average Backward:  10601.4883518219  ms
+Average Total:     15929.20458316803  ms
+

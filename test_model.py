@@ -1,6 +1,6 @@
 '''
 dl_model:2017/08/17
-autuor: ZhaZha
+autuor: ZheZhan
 '''
 
 
@@ -12,33 +12,98 @@ import math
 from google.protobuf import text_format
 
 
+class Node(object):
+
+    def __init__(self, **param):
+        self.__dict__.update(param)
+
+# class ConvNode(Node):
+#
+#     def set_conv_prop(self):
+#         self.pad_whole = self.pad
+#     def set_input_size(self, input_size):
+#         self.set_input_size(input_size)
 
 class lineNode(object):
 
-    def __init__(self, start, starttype):
+    def __init__(self, start, end):
         self.start = start
-        self.starttype = starttype
-
+        self.end = end
+        self.l = lineNode.get_line_length()
     def get_line_length(self):
         thenode = self.start
-        self.l = 1
-        while len(thenode['output_name']) == 1:
-            self.l += 1
-            thenode = thenode['output_name'][0]
-
-class BlockNode(object):
-
-    def __init__(self):
-        self.line_list = []
-
-    def set_before_node(self, node):
-        self.before_node = node
-
-    def add_line_node(self, line_node):
-        self.line_list.append(line_node)
-
+        l = 1
+        while thenode.output_name != self.end:
+            l += 1
+        return l
     def __len__(self):
-        return len(self.line_list)
+        return lineNode.get_line_length()
+
+# class BlockNode(object):
+#
+#     def __init__(self, node):
+#         self.line_list = []
+#         self.inputs = []
+#         self.inputs.append(node)
+#
+#     def set_before_node(self, node):
+#         self.before_node = node
+#
+#     def add_line_node(self, line_node):
+#         self.line_list.append(line_node)
+#
+#     def __len__(self):
+#         return len(self.line_list)
+
+def search_node(node_info, name):
+    for i in range(0, len(node_info)):
+        if node_info[i].name == name:
+            return node_info[i]
+
+
+
+class NodeLayer(object):
+    def __init__(self, node, type):
+        self.node = node
+        self.type = type
+    def get_output_name(self):
+        output_name = self.node.output_name[0]
+        temp_node = search_node(node_info, output_name)
+        return temp_node
+
+    def get_node_prop(self, **param):
+        self.__dict__.update(param)
+
+    def __cmp__(self, other):
+
+        return self.type == other.type
+
+
+class BlockLayer(object):
+    def __init__(self, input_name, type):
+        self.input_name = input_name
+        self.type =type
+        self.start_node_set = []
+        self.linenode_set = []
+
+    def get_output_node(self,model_node):
+        temp_node = search_layer(model_node, self.input_name[0])
+        while len(model_node.output_name) == 1:
+            temp_node = search_layer(model_node, temp_node.output_name[0])
+        return temp_node
+
+    def build_block_prop(self, model_node):
+        for i in range(1,len(self.input_name)):
+            temp_node = search_layer(model_node, self.input_name[i])
+            self.start_node_set.append(temp_node)
+
+    def build_linenode_set(self):
+        for i in range(1, len(self.input_name)):
+            temp = lineNode(self.start_node_set[i].name, self.get_output_node().name)
+            self.linenode_set.append(temp)
+
+
+
 
 
 def props(obj):
@@ -373,6 +438,47 @@ def test_convolution_pad():
     print 'output_size: %r \npad_in: %r\npad_whole: %r\n' % (output_size, pad_in, pad_whole)
 
 
+def test_class_function():
+    net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
+    net = caffe_pb2.NetParameter()
+
+    f = open(net_file, 'r')
+    text_format.Merge(f.read(), net)
+    phase = caffe_pb2.Phase.Value('TRAIN')
+
+    input_size = [3, 224, 224]
+    model_info = build_graph(net, input_size, phase)
+
+    model_list = []
+    thenode = model_info[0]
+
+    while thenode['output_name'] != None:
+        if len(thenode['output_name'] == 1) :
+            model_list.append(thenode)
+
+def convert_to_node(model_info):
+    node_info = []
+    for i in range(1,len(model_info)):
+        temp_node = Node(**model_info[i])
+        node_info.append(temp_node)
+    return node_info
+
+def conver_to_layer(node_info):
+    layer_info = []
+    input_node = node_info[0]
+    temp_node = input_node
+
+    temp_layer = NodeLayer(temp_node,'node')
+    layer_info.append(temp_layer)
+
+    while temp_node.output_name:
+        if len(temp_node.output_name) == 1:
+            next_node = search_node(node_info, temp_node.output_name[0])
+        else:
+            
+            for i in range(1, len(temp_node.output_name)):
+
+
 
 if __name__ == "__main__":
     caffe_root = '/home/zhangge/caffe/'
@@ -382,15 +488,18 @@ if __name__ == "__main__":
     net = caffe_pb2.NetParameter()
     f = open(net_file, 'r')
     text_format.Merge(f.read(), net)
-
     phase = caffe_pb2.Phase.Value('TRAIN')
 
     input_size = [3, 224, 224]
     model_info = build_graph(net, input_size, phase)
     model_info_1 = model_info
+
+    node_info = convert_to_node(model_info)
+    for i in range(1,len(node_info)):
+        print vars(node_info[i])
     # test_final_model(model_info)
 
-    compare_model(model_info, model_info_1)
+    # compare_model(model_info, model_info_1)
     # input_size = [3, 224, 224]
 
     # test_default_setting(net)

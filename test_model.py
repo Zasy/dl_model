@@ -24,20 +24,7 @@ class Node(object):
 #     def set_input_size(self, input_size):
 #         self.set_input_size(input_size)
 
-class lineNode(object):
 
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-        self.l = lineNode.get_line_length()
-    def get_line_length(self):
-        thenode = self.start
-        l = 1
-        while thenode.output_name != self.end:
-            l += 1
-        return l
-    def __len__(self):
-        return lineNode.get_line_length()
 
 # class BlockNode(object):
 #
@@ -77,33 +64,6 @@ class NodeLayer(object):
     def __cmp__(self, other):
 
         return self.type == other.type
-
-
-class BlockLayer(object):
-    def __init__(self, input_name, type):
-        self.input_name = input_name
-        self.type =type
-        self.start_node_set = []
-        self.linenode_set = []
-
-    def get_output_node(self,model_node):
-        temp_node = search_layer(model_node, self.input_name[0])
-        while len(model_node.output_name) == 1:
-            temp_node = search_layer(model_node, temp_node.output_name[0])
-        return temp_node
-
-    def build_block_prop(self, model_node):
-        for i in range(1,len(self.input_name)):
-            temp_node = search_layer(model_node, self.input_name[i])
-            self.start_node_set.append(temp_node)
-
-    def build_linenode_set(self):
-        for i in range(1, len(self.input_name)):
-            temp = lineNode(self.start_node_set[i].name, self.get_output_node().name)
-            self.linenode_set.append(temp)
-
-
-
 
 
 def props(obj):
@@ -456,47 +416,127 @@ def test_class_function():
         if len(thenode['output_name'] == 1) :
             model_list.append(thenode)
 
+class lineNode(object):
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+        self.loss = False
+    def get_line_length(self, node_info):
+        thenode = self.start
+        l = 0
+        while thenode.name != self.end.name:
+            l += 1
+            if len(thenode.output_name) > 0:
+                thenode = search_node(node_info, thenode.output_name[0])
+            else:
+                thenode = self.end # find the end node
+                self.loss = True
+        self.l = l
+        return l
+
+class BlockLayer(object):
+    def __init__(self, input_name, type):
+        self.input_name = input_name
+        self.type =type
+        self.start_node_set = []
+        self.linenode_set = []
+
+    def build_output_node(self, node_info):
+        temp_node = find_line_end(search_node(node_info, self.input_name[0]))
+        self.output_node = temp_node
+
+    def get_output_node(self):
+
+        return self.output_node
+
+    def build_block_prop(self, node_info):
+        end_node = self.output_node
+        for i in range(0,len(self.input_name)):
+            if self.input_name[i] != end_node.name:
+                temp_node = search_node(node_info, self.input_name[i])
+            else:
+                temp_node = None
+            self.start_node_set.append(temp_node)
+
+    def build_linenode_set(self, node_info):
+        end_node = self.output_node
+        for i in range(0, len(self.input_name)):
+
+            start_node = search_node(node_info, self.input_name[i])
+
+            temp = lineNode(start_node, end_node)
+            temp.get_line_length(node_info)
+            self.linenode_set.append(temp)
+
+def find_line_end(start_node):
+    temp_node = start_node
+    # find the end node having multi input path.
+    while len(temp_node.input_name) == 1:
+        if len(temp_node.output_name) > 1:
+            exit('line_node find multi output_path')
+        temp_node = search_node(node_info, temp_node.output_name[0])
+
+    return temp_node
+
 def convert_to_node(model_info):
     node_info = []
-    for i in range(1,len(model_info)):
+    for i in range(0,len(model_info)):
         temp_node = Node(**model_info[i])
         node_info.append(temp_node)
     return node_info
 
-def conver_to_layer(node_info):
+def convert_to_layer(node_info):
     layer_info = []
     input_node = node_info[0]
     temp_node = input_node
-
-    temp_layer = NodeLayer(temp_node,'node')
-    layer_info.append(temp_layer)
-
     while temp_node.output_name:
+        temp_layer = NodeLayer(temp_node, 'node')
+        layer_info.append(temp_layer)
         if len(temp_node.output_name) == 1:
             next_node = search_node(node_info, temp_node.output_name[0])
         else:
-            
-            for i in range(1, len(temp_node.output_name)):
+            temp_block_layer = BlockLayer(temp_node.output_name, 'block')
+            temp_block_layer.build_output_node(node_info)
+            temp_block_layer.build_block_prop(node_info)
+            temp_block_layer.build_linenode_set(node_info)
+            layer_info.append(temp_block_layer)
+
+            next_node = temp_block_layer.get_output_node(node_info)
+
+        temp_node = next_node
+    return layer_info
 
 
+def test_convert_to_layer(node_info):
+    layer_info = convert_to_layer(node_info)
 
-if __name__ == "__main__":
-    caffe_root = '/home/zhangge/caffe/'
-    os.chdir(caffe_root)
-    # net_file = caffe_root + 'models/bvlc_alexnet/train_val.prototxt'
-    net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
-    net = caffe_pb2.NetParameter()
-    f = open(net_file, 'r')
-    text_format.Merge(f.read(), net)
-    phase = caffe_pb2.Phase.Value('TRAIN')
+    for i in layer_info:
+        if i.type == 'node':
+            print vars(i.node)
 
-    input_size = [3, 224, 224]
-    model_info = build_graph(net, input_size, phase)
-    model_info_1 = model_info
+a = 1
 
-    node_info = convert_to_node(model_info)
-    for i in range(1,len(node_info)):
-        print vars(node_info[i])
+# if __name__ == "__main__":
+caffe_root = '/home/zhangge/caffe/'
+os.chdir(caffe_root)
+# net_file = caffe_root + 'models/bvlc_alexnet/train_val.prototxt'
+net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
+net = caffe_pb2.NetParameter()
+f = open(net_file, 'r')
+text_format.Merge(f.read(), net)
+phase = caffe_pb2.Phase.Value('TRAIN')
+
+input_size = [3, 224, 224]
+model_info = build_graph(net, input_size, phase)
+model_info_1 = model_info
+
+node_info = convert_to_node(model_info)
+# for i in range(0,len(node_info)):
+#     print vars(node_info[i])
+
+test_convert_to_layer(node_info)
+
     # test_final_model(model_info)
 
     # compare_model(model_info, model_info_1)

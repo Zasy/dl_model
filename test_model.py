@@ -12,42 +12,18 @@ import math
 from google.protobuf import text_format
 
 
+
+
+
 class Node(object):
 
     def __init__(self, **param):
         self.__dict__.update(param)
 
-# class ConvNode(Node):
-#
-#     def set_conv_prop(self):
-#         self.pad_whole = self.pad
-#     def set_input_size(self, input_size):
-#         self.set_input_size(input_size)
-
-
-
-# class BlockNode(object):
-#
-#     def __init__(self, node):
-#         self.line_list = []
-#         self.inputs = []
-#         self.inputs.append(node)
-#
-#     def set_before_node(self, node):
-#         self.before_node = node
-#
-#     def add_line_node(self, line_node):
-#         self.line_list.append(line_node)
-#
-#     def __len__(self):
-#         return len(self.line_list)
-
 def search_node(node_info, name):
     for i in range(0, len(node_info)):
         if node_info[i].name == name:
             return node_info[i]
-
-
 
 class NodeLayer(object):
     def __init__(self, node, type):
@@ -63,7 +39,16 @@ class NodeLayer(object):
 
     def __cmp__(self, other):
 
-        return self.type == other.type
+        isOne = (self.type == other.type and self.input_size == other.input_size)
+        if isOne == False:
+            return False,'basic'
+        else:
+            if (self.type == 'Convolution' and other.type == 'Convolution') or \
+                (self.type == 'Pooling' and other.type == 'Pooling') :
+                return (isOne and self.kernel_size == other.kernel_size and self.stride == other.stride and \
+                        self.pad == other.pad and self.pad_in == other.pad_in and self.pad_whole == self.pad_whole), 'pad'
+            return True,'same'
+
 
 
 def props(obj):
@@ -188,6 +173,11 @@ def build_graph(net, input_size, phase):
                 pad = layer.pooling_param.pad
             if layer.pooling_param.stride:
                 stride = layer.pooling_param.stride
+
+            dict['kernel_size'] = kernel_size
+            dict['stride'] = stride
+            dict['pad'] = pad
+
             dict['output_size'],dict['pad_in'],dict['pad_whole'] \
                 = get_pooing_output_size(dict['input_size'], kernel_size, stride, pad)
             model_info.append(dict)
@@ -216,8 +206,6 @@ def build_graph(net, input_size, phase):
 
             bottom_layer['output_name'].append(layer.name)
 
-
-
             pad = 0
             kernel_size = 0
             num_output = 0
@@ -230,6 +218,10 @@ def build_graph(net, input_size, phase):
                 num_output = layer.convolution_param.num_output
             if layer.convolution_param.stride:
                 stride = layer.convolution_param.stride[0]
+
+            dict['kernel_size'] = kernel_size
+            dict['stride'] = stride
+            dict['pad'] = pad
 
             dict['input_size'] = bottom_layer['output_size']
             dict['num_output'] = num_output
@@ -290,11 +282,29 @@ def build_graph(net, input_size, phase):
 
             bottom_layer['output_name'].append(layer.name)
 
-            bottom_layer['output_name'] =[layer.anme]
+            bottom_layer['output_name'] =[layer.name]
 
             dict['input_size'] = bottom_layer['output_size']
             dict['output_size'] = dict['input_size']
             dict['final'] = True
+            model_info.append(dict)
+
+        elif layer.type == "Eltwise":
+            bottom = layer.bottom
+            input_size = [0,0,0]
+            for one_bottom in bottom:
+                dict['input_name'].append(one_bottom)
+                bottom_layer = search_layer(model_info, one_bottom)
+
+                bottom_layer['output_name'].append(layer.name)
+
+
+                if input_size[0] == 0:
+                    input_size = bottom_layer['output_size']
+                else:
+                    input_size[0] += bottom_layer['output_size'][0]
+            dict['input_size'] = input_size
+            dict['output_size'] = input_size
             model_info.append(dict)
 
     return model_info
@@ -329,9 +339,6 @@ def compare_model(model_a, model_b):
 
     for i in range(0,len(model_a), 1):
         compare_two_node(model_a[i], model_b[i])
-
-
-
 
 def test_final_model(model_info):
 
@@ -422,6 +429,7 @@ class lineNode(object):
         self.start = start
         self.end = end
         self.loss = False
+        self.flag = False
     def get_line_length(self, node_info):
         thenode = self.start
         l = 0
@@ -441,10 +449,6 @@ class BlockLayer(object):
         self.type =type
         self.start_node_set = []
         self.linenode_set = []
-
-    def build_output_node(self, node_info):
-        temp_node = find_line_end(search_node(node_info, self.input_name[0]))
-        self.output_node = temp_node
 
     def get_output_node(self):
 
@@ -468,6 +472,16 @@ class BlockLayer(object):
             temp = lineNode(start_node, end_node)
             temp.get_line_length(node_info)
             self.linenode_set.append(temp)
+
+    def build_output_node(self, node_info):
+
+        temp_node = search_node(node_info, self.input_name[len(self.input_name) - 1])
+        while len(temp_node.input_name) == 1:
+            if len(temp_node.output_name) > 1:
+                exit('line_node find multi output_path')
+            temp_node = search_node(node_info, temp_node.output_name[0])
+        self.output_node = temp_node
+
 
 def find_line_end(start_node):
     temp_node = start_node
@@ -502,9 +516,11 @@ def convert_to_layer(node_info):
             temp_block_layer.build_linenode_set(node_info)
             layer_info.append(temp_block_layer)
 
-            next_node = temp_block_layer.get_output_node(node_info)
+            next_node = temp_block_layer.get_output_node()
 
         temp_node = next_node
+    temp_layer = NodeLayer(temp_node, 'node')
+    layer_info.append(temp_layer)
     return layer_info
 
 
@@ -514,14 +530,76 @@ def test_convert_to_layer(node_info):
     for i in layer_info:
         if i.type == 'node':
             print vars(i.node)
+        elif i.type == 'block':
+            print "block{\n"
+            for j in i.linenode_set:
+                print vars(j)
+            print "}\n"
 
-a = 1
+def compare_two_line(line_1, line_2, node_info):
+    if line_1.l != line_2.l:
+        return False,'line length is different.'
+    line_1_temp_node = line_1.start
+    line_2_temp_node = line_2.start
+    for i in range(0,line_1.l):
+        if line_1_temp_node != line_2_temp_node:
+            return False, 'line node is diffrent.'
+        line_1_temp_node = search_node(node_info, line_1_temp_node.output_name[0])
+        line_2_temp_node = search_node(node_info, line_2_temp_node.output_name[0])
+    return True
+
+def compare_two_block(block_1, block_2):
+
+    if len(block_1.linenode_set) != len(block_2.linenode_set):
+        return False,'num of line topology'
+    set_1 = block_1.linenode_set
+    set_2 = block_2.linenode_set
+
+    for i in range(0,len(set_1)):
+        temp_line_1 = set_1[i]
+        for j in range(0,len(set_2)):
+            if compare_two_line(temp_line_1, set_2[j]):
+                set_2.pop(j)
+                set_1[i].issame = True
+                break
+
+    if len(set_2) == 0:
+        return True
+    else:
+        return False
+
+
+
+def compare_two_model(layer_one, layer_two):
+    temp_layer_a = layer_one[0]
+    temp_layer_b = layer_two[0]
+
+    if len(layer_one) > len(layer_two):
+        exit('length one is longer than length two')
+    elif len(layer_one) < len(layer_two):
+        exit('length one is shorter than length two')
+
+    for i in range(0,len(layer_one)):
+        temp_a = layer_one[i]
+        temp_b = layer_two[i]
+
+        if temp_a.type == temp_b.type:
+            if temp_a.type == 'node':
+                pass
+            else:
+                pass
+
+        else:
+            exit('The type is different.')
+
 
 # if __name__ == "__main__":
 caffe_root = '/home/zhangge/caffe/'
 os.chdir(caffe_root)
 # net_file = caffe_root + 'models/bvlc_alexnet/train_val.prototxt'
-net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
+# net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
+net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
+# net_file = caffe_root + 'models/default_vgg_19/train_val.prototxt'
 net = caffe_pb2.NetParameter()
 f = open(net_file, 'r')
 text_format.Merge(f.read(), net)
@@ -538,7 +616,6 @@ node_info = convert_to_node(model_info)
 test_convert_to_layer(node_info)
 
     # test_final_model(model_info)
-
     # compare_model(model_info, model_info_1)
     # input_size = [3, 224, 224]
 

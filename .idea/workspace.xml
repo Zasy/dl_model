@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9814544f-5fe2-4893-97b1-9426d906041e" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_model.py" afterPath="$PROJECT_DIR$/test_model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,16 +15,6 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="caffe_pb2.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/caffe/python/caffe/proto/caffe_pb2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-144">
-              <caret line="54" column="18" lean-forward="false" selection-start-line="54" selection-start-column="18" selection-end-line="54" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="test_torch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_torch.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -37,7 +28,7 @@
       <file leaf-file-name="test_chainer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_chainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
+            <state relative-caret-position="90">
               <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
@@ -49,8 +40,8 @@
       <file leaf-file-name="test_model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="521">
-              <caret line="480" column="0" lean-forward="true" selection-start-line="480" selection-start-column="0" selection-end-line="480" selection-end-column="0" />
+            <state relative-caret-position="1344">
+              <caret line="601" column="29" lean-forward="true" selection-start-line="601" selection-start-column="29" selection-end-line="601" selection-end-column="29" />
               <folding>
                 <element signature="e#46#64#0" expanded="true" />
               </folding>
@@ -61,7 +52,7 @@
       <file leaf-file-name="Node.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Node.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="623">
+            <state relative-caret-position="720">
               <caret line="40" column="24" lean-forward="false" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="24" />
               <folding />
             </state>
@@ -81,8 +72,8 @@
       <file leaf-file-name="print_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tf_test/print_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="24" column="26" lean-forward="true" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
+            <state relative-caret-position="432">
+              <caret line="24" column="26" lean-forward="false" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -142,7 +133,6 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -181,6 +171,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -257,6 +248,39 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <method />
     </configuration>
+    <configuration default="false" name="Unittests for test_model.test_convert_to_layer" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="pymodel" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_model.test_convert_to_layer&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method />
+    </configuration>
+    <configuration default="false" name="loader" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/anaconda2/lib/python2.7/unittest" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="pymodel" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/anaconda2/lib/python2.7/unittest/loader.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -321,16 +345,20 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method />
     </configuration>
-    <list size="3">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests in test_model.py" />
       <item index="1" class="java.lang.String" itemvalue="Python.print_test" />
       <item index="2" class="java.lang.String" itemvalue="Python.Node" />
+      <item index="3" class="java.lang.String" itemvalue="Python tests.Unittests for test_model.test_convert_to_layer" />
+      <item index="4" class="java.lang.String" itemvalue="Python.loader" />
     </list>
     <recent_temporary>
-      <list size="3">
+      <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests in test_model.py" />
-        <item index="1" class="java.lang.String" itemvalue="Python.Node" />
-        <item index="2" class="java.lang.String" itemvalue="Python.print_test" />
+        <item index="1" class="java.lang.String" itemvalue="Python tests.Unittests for test_model.test_convert_to_layer" />
+        <item index="2" class="java.lang.String" itemvalue="Python.loader" />
+        <item index="3" class="java.lang.String" itemvalue="Python.Node" />
+        <item index="4" class="java.lang.String" itemvalue="Python.print_test" />
       </list>
     </recent_temporary>
   </component>
@@ -348,34 +376,34 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 15h 06m 01s.xml">
+    <history-entry file="Unittests_for_test_model_test_convert_to_layer - 2017.09.26 at 15h 01m 21s.xml">
+      <configuration name="Unittests for test_model.test_convert_to_layer" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_model_test_convert_to_layer - 2017.09.26 at 15h 04m 35s.xml">
+      <configuration name="Unittests for test_model.test_convert_to_layer" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_model_test_convert_to_layer - 2017.09.26 at 15h 10m 50s.xml">
+      <configuration name="Unittests for test_model.test_convert_to_layer" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_model_test_convert_to_layer - 2017.09.26 at 15h 25m 19s.xml">
+      <configuration name="Unittests for test_model.test_convert_to_layer" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_model_test_convert_to_layer - 2017.09.26 at 15h 25m 50s.xml">
+      <configuration name="Unittests for test_model.test_convert_to_layer" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_test_model_py - 2017.09.26 at 15h 05m 16s.xml">
       <configuration name="Unittests in test_model.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 15h 06m 02s.xml">
+    <history-entry file="Unittests_in_test_model_py - 2017.09.26 at 15h 18m 27s.xml">
       <configuration name="Unittests in test_model.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 15h 21m 28s.xml">
+    <history-entry file="Unittests_in_test_model_py - 2017.09.26 at 15h 25m 09s.xml">
       <configuration name="Unittests in test_model.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 00m 10s.xml">
+    <history-entry file="Unittests_in_test_model_py - 2017.09.26 at 15h 39m 27s.xml">
       <configuration name="Unittests in test_model.py" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 02m 46s.xml">
-      <configuration name="Unittests in test_model.py" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 10m 46s.xml">
-      <configuration name="Unittests in test_model.py" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 27m 07s.xml">
-      <configuration name="Unittests in test_model.py" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 27m 27s.xml">
-      <configuration name="Unittests in test_model.py" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 33m 49s.xml">
-      <configuration name="Unittests in test_model.py" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_in_test_model_py - 2017.09.25 at 16h 35m 38s.xml">
+    <history-entry file="Unittests_in_test_model_py - 2017.09.27 at 13h 49m 50s.xml">
       <configuration name="Unittests in test_model.py" configurationId="tests" />
     </history-entry>
   </component>
@@ -392,15 +420,15 @@
     <frame x="65" y="-4" width="1855" height="1204" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14648977" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14980653" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295238" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48761904" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31142858" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295238" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32761905" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39239332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39888683" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.43506494" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -420,30 +448,74 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/test_model.py</url>
-          <line>537</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_model.py</url>
-          <line>513</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_model.py</url>
-          <line>498</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_model.py</url>
-          <line>501</line>
-          <option name="timeStamp" value="23" />
+          <line>529</line>
+          <option name="timeStamp" value="38" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="27" />
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="39" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/test_torch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="25" lean-forward="false" selection-start-line="3" selection-start-column="25" selection-end-line="3" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_chainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="40" column="24" lean-forward="false" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_tf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tf_test/print_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" column="26" lean-forward="false" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9036">
+          <caret line="502" column="47" lean-forward="true" selection-start-line="502" selection-start-column="47" selection-end-line="502" selection-end-column="47" />
+          <folding>
+            <element signature="e#46#64#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/caffe/python/caffe/proto/caffe_pb2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="972">
@@ -507,9 +579,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11376">
           <caret line="642" column="0" lean-forward="false" selection-start-line="642" selection-start-column="0" selection-end-line="648" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -654,9 +723,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11376">
           <caret line="642" column="0" lean-forward="false" selection-start-line="642" selection-start-column="0" selection-end-line="648" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -685,7 +751,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-7913">
           <caret line="4170" column="4" lean-forward="false" selection-start-line="4170" selection-start-column="4" selection-end-line="4170" selection-end-column="4" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -693,13 +758,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-342">
           <caret line="41" column="10" lean-forward="true" selection-start-line="41" selection-start-column="10" selection-end-line="41" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/caffe/python/caffe/proto/caffe_pb2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-144">
+        <state relative-caret-position="-6408">
           <caret line="54" column="18" lean-forward="false" selection-start-line="54" selection-start-column="18" selection-end-line="54" selection-end-column="18" />
           <folding />
         </state>
@@ -715,8 +779,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tf_test/print_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="24" column="26" lean-forward="true" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
+        <state relative-caret-position="432">
+          <caret line="24" column="26" lean-forward="false" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
           <folding />
         </state>
       </provider>
@@ -731,7 +795,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test_chainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
+        <state relative-caret-position="90">
           <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
@@ -741,24 +805,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Node.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="623">
+        <state relative-caret-position="720">
           <caret line="40" column="24" lean-forward="false" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/caffe/python/caffe/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="30" column="76" lean-forward="true" selection-start-line="30" selection-start-column="76" selection-end-line="30" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/anaconda2/lib/python2.7/unittest/loader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1194">
-          <caret line="231" column="0" lean-forward="false" selection-start-line="231" selection-start-column="0" selection-end-line="231" selection-end-column="0" />
+        <state relative-caret-position="201">
+          <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="521">
-          <caret line="480" column="0" lean-forward="true" selection-start-line="480" selection-start-column="0" selection-end-line="480" selection-end-column="0" />
+        <state relative-caret-position="1344">
+          <caret line="601" column="29" lean-forward="true" selection-start-line="601" selection-start-column="29" selection-end-line="601" selection-end-column="29" />
           <folding>
             <element signature="e#46#64#0" expanded="true" />
           </folding>

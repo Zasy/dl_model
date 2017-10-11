@@ -1,10 +1,45 @@
 import alex
 from chainer import Variable
 import numpy as np
+import chainer.computational_graph as c
+import chainer.links as L
+
+
+
+def props(obj):
+    pr = {}
+    for name in dir(obj):
+        value = getattr(obj, name)
+        if not name.startswith('__') and not callable(value):
+            pr[name] = value
+    return pr
+
 
 model = alex.Alex()
 
-x = Variable(np.asarray([0,2], [1, -3]))
+x = Variable(np.array([[1, 2, 3], [4, 5, 6]], dtype=np.float32))
+f = L.Linear(3, 2)
+y = f(x)
+y.data
+
+data = np.ndarray((128,3,model.insize,model.insize), dtype=np.float32)
+data.fill(3333)
+
+label = np.ndarray((128), dtype=np.int32)
+label.fill(1)
+x = np.asarray(data)
+g = c.build_computational_graph(model.forward(x))
+with open('./test_new', 'w') as o:
+    o.write(g.dump())
+
+# for one_node in g.nodes:
+#     input = one_node.inputs[0]
+#
+#     output = one_node.outputs[0]
+#     label = one_node.label
+
+
+
 
 # for name, value in six.iteritems(model.params()):
 #     print (name, value)

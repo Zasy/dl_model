@@ -672,12 +672,12 @@ def test_compare_model(layer_a, layer_b, node_info_1, node_info_2):
 caffe_root = '/home/zhangge/caffe/'
 os.chdir(caffe_root)
 # net_file = caffe_root + 'models/bvlc_alexnet/train_val.prototxt'
-# net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
+net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
 # net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
 # net_file = caffe_root + 'models/default_vgg_19/train_val.prototxt'
 
 
-net_file = caffe_root + 'models/dummy_data/FB_resnet_train_val_dummy.prototxt'
+#net_file = caffe_root + 'models/dummy_data/FB_resnet_train_val_dummy.prototxt'
 net_file_1 = caffe_root + 'models/dummy_data/default_resnet_train_val_dummy.prototxt'
 
 net = caffe_pb2.NetParameter()

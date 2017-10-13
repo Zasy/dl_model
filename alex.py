@@ -26,4 +26,5 @@ class Alex(chainer.Chain):
         h = F.max_pooling_2d(F.relu(self.conv5(h)), 3, stride=2)
         h = F.relu(self.fc6(h))
         h = F.relu(self.fc7(h))
-        return self.fc8(h)
+        out = self.fc8(h)
+        return out

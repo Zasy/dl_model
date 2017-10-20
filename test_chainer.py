@@ -4,6 +4,7 @@ import numpy as np
 import chainer.computational_graph as c
 import chainer.links as L
 import googlenet
+import resnet
 
 
 
@@ -16,8 +17,10 @@ def props(obj):
     return pr
 
 
-model = alex.Alex()
-#model = googlenet.GoogLeNet()
+#model = alex.Alex()
+model = googlenet.GoogLeNet()
+#model = resnet.ResNet()
+
 x = Variable(np.array([[1, 2, 3], [4, 5, 6]], dtype=np.float32))
 f = L.Linear(3, 2)
 y = f(x)
@@ -33,9 +36,6 @@ g = c.build_computational_graph(model.forward(x), remove_variable=False)
 with open('./test_new', 'w') as o:
     o.write(g.dump())
 
-for one in g.nodes:
-    #print one.lable
-    pass
 # for one_node in g.nodes:
 #     input = one_node.inputs[0]
 #

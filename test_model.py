@@ -215,8 +215,7 @@ def build_graph(net, input_size, phase):
             kernel_size = 0
             num_output = 0
             stride = 1
-            name = layer.name
-            test = layer.convolution_param
+
             if layer.convolution_param.pad :
                 pad = layer.convolution_param.pad[0]
             if layer.convolution_param.kernel_size:

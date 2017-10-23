@@ -10,3 +10,5 @@ We will build a easiable tools to visulize a model from different frameworks. Fi
 ### Feature
 * The png file contain every layer's data input_size, parameters and data output_size.
 * For the different framework has some diference about padding stratage, so we also display padding size.
+
+for the test git hub.

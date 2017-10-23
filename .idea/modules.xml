@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/pymodel.iml" filepath="$PROJECT_DIR$/.idea/pymodel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/dl_model.iml" filepath="$PROJECT_DIR$/.idea/dl_model.iml" />
     </modules>
   </component>
 </project>

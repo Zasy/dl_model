@@ -86,11 +86,11 @@ def get_pooing_output_size(input_size, kernel_size, stride, pad=0):
     if pad_in_h > pad_whole_h :pad_whole_h = pad_in_h
     if pad_in_w> pad_whole_w: pad_whole_w = pad_in_h
 
-    pad_whole = [input_size[0], pad_whole_h, pad_whole_w]
-    pad_in = [input_size[0], (output_h-1)*stride + kernel_h, (output_w-1)*stride +kernel_w]
+    pad_whole = (input_size[0], pad_whole_h, pad_whole_w)
+    pad_in = (input_size[0], (output_h-1)*stride + kernel_h, (output_w-1)*stride +kernel_w)
 
 
-    output_size = [input_size[0], output_h, output_w]
+    output_size = (input_size[0], output_h, output_w)
 
     return output_size, pad_in, pad_whole
 
@@ -119,9 +119,9 @@ def get_convolution_output_size(input_size, num_output, kernel_size, stride, pad
     pad_whole_h = input_h + 2*pad_h
     pad_whole_w = input_w + 2*pad_w
 
-    pad_whole = [input_size[0], int(pad_whole_h), int(pad_whole_w)]
-    pad_in = [input_size[0], int((output_h-1)*stride + kernel_h), int((output_w-1)*stride +kernel_w)]
-    output_size = [num_output, output_h, output_w]
+    pad_whole = (input_size[0], int(pad_whole_h), int(pad_whole_w))
+    pad_in = (input_size[0], int((output_h-1)*stride + kernel_h), int((output_w-1)*stride +kernel_w))
+    output_size = (num_output, output_h, output_w)
 
     return output_size, pad_in, pad_whole
 
@@ -133,6 +133,7 @@ def build_graph(net, input_size, phase):
         dict['name'] = layer.name
         dict['input_name'] = []
         dict['output_name'] = []
+        dict['caffe_node'] = layer
         if layer.type == 'Data':
             if layer.include[0].phase == phase:
                 dict['locate'] = True
@@ -235,24 +236,17 @@ def build_graph(net, input_size, phase):
                 get_convolution_output_size(dict['input_size'], num_output, kernel_size, stride, pad)
             model_info.append(dict)
         elif layer.type == 'ReLU':
-
             bottom = layer.bottom[0]
             bottom_layer = search_layer(model_info, bottom)
             bottom_layer['ReLU'] = True
 
-
         elif layer.type == 'Concat':
             bottom = layer.bottom
-
-
-            input_size = [0,0,0]
+            input_size = (0,0,0)
             for one_bottom in bottom:
                 dict['input_name'].append(one_bottom)
                 bottom_layer = search_layer(model_info, one_bottom)
-
                 bottom_layer['output_name'].append(layer.name)
-
-
                 if input_size[0] == 0:
                     input_size = bottom_layer['output_size']
                 else:
@@ -271,7 +265,7 @@ def build_graph(net, input_size, phase):
             dict['input_size'] = bottom_layer['output_size']
             dict['num_output'] = layer.inner_product_param.num_output
 
-            dict['output_size'] = [0,0]
+            dict['output_size'] = (0,0)
             dict['output_size'][0] = dict['input_size'][0]
             dict['output_size'][1] = dict['num_output']
             model_info.append(dict)
@@ -284,7 +278,7 @@ def build_graph(net, input_size, phase):
 
         elif layer.type == "Eltwise":
             bottom = layer.bottom
-            input_size = [0,0,0]
+            input_size = (0,0,0)
             for one_bottom in bottom:
                 dict['input_name'].append(one_bottom)
                 bottom_layer = search_layer(model_info, one_bottom)
@@ -667,12 +661,14 @@ class sizeMessage(object):
 def test_compare_model(layer_a, layer_b, node_info_1, node_info_2):
     exitMessage_list, sizeMessage_list= compare_two_model(layer_a, layer_b, node_info_1, node_info_2)
 
+
+
 # if __name__ == "__main__":
 caffe_root = '/home/zhangge/caffe/'
 os.chdir(caffe_root)
 # net_file = caffe_root + 'models/bvlc_alexnet/train_val.prototxt'
-net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
-# net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
+# net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
+net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
 # net_file = caffe_root + 'models/default_vgg_19/train_val.prototxt'
 
 
@@ -683,7 +679,7 @@ net = caffe_pb2.NetParameter()
 f = open(net_file, 'r')
 text_format.Merge(f.read(), net)
 phase = caffe_pb2.Phase.Value('TRAIN')
-input_size = [3, 224, 224]
+input_size = (3, 224, 224)
 model_info = build_graph(net, input_size, phase)
 
 net_1 = caffe_pb2.NetParameter()

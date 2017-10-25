@@ -1,0 +1,7 @@
+(conv1)Convolution: (shape=(96, 54, 54), k=11, s=4, p=0, p_in=(3, 223, 223), p_whole=(3, 224, 224))
+(pool1)Pooling: (shape=(96, 27, 27), k=3, s=2, p=0, p_in=(96, 55, 55), p_whole=(96, 55, 55))
+(conv2)Convolution: (shape=(256, 27, 27), k=5, s=1, p=2, p_in=(96, 31, 31), p_whole=(96, 31, 31))
+(pool2)Pooling: (shape=(256, 13, 13), k=3, s=2, p=0, p_in=(256, 27, 27), p_whole=(256, 27, 27))
+(conv3)Convolution: (shape=(384, 13, 13), k=3, s=1, p=1, p_in=(256, 15, 15), p_whole=(256, 15, 15))
+(conv4)Convolution: (shape=(384, 13, 13), k=3, s=1, p=1, p_in=(384, 15, 15), p_whole=(384, 15, 15))
+(conv5)Convolution: (shape=(256, 13, 13), k=3, s=1, p=1, p_in=(384, 15, 15), p_whole=(384, 15, 15))

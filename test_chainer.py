@@ -17,10 +17,10 @@ def props(obj):
     return pr
 
 
-#model = alex.Alex()
+model = alex.Alex()
 # model = googlenet.GoogLeNet()
 # model = resnet.ResNet()
-model = resnet50.ResNet50()
+# model = resnet50.ResNet50()
 
 x = Variable(np.array([[1, 2, 3], [4, 5, 6]], dtype=np.float32))
 f = L.Linear(3, 2)

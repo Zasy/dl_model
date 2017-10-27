@@ -9,20 +9,12 @@ import caffe.proto.caffe_pb2 as caffe_pb2
 import math
 from google.protobuf import text_format
 # from tabulate import tabulate
-from rank_multi_port import build_nodes, change_nodes_list
+from rank_multi_port import get_node_list
 
 
 del_type_set = ['LRN']
 
-class Node(object):
 
-    def __init__(self, **param):
-        self.__dict__.update(param)
-
-def search_node(node_info, name):
-    for i in range(0, len(node_info)):
-        if node_info[i].name == name:
-            return node_info[i]
 
 def search_dict_node(model_info, name):
     for i in range(0, len(model_info)):
@@ -116,6 +108,7 @@ def get_convolution_output_size(input_size, num_output, kernel_size, stride, pad
 
 def build_graph(net, input_size, phase):
     model_info = []
+    Data_layer_name = None
     for layer in net.layer:
         dict = {}
         dict['type'] = layer.type
@@ -123,19 +116,22 @@ def build_graph(net, input_size, phase):
         dict['input_name'] = []
         dict['output_name'] = []
         dict['caffe_node'] = layer
+        dict['rank'] = 1
         if layer.type == 'Data':
             if layer.include[0].phase == phase:
-                dict['locate'] = True
-                dict['input_size'] = input_size
-                dict['output_size'] = input_size
-                model_info.append(dict)
+                # dict['locate'] = True
+                # dict['input_size'] = input_size
+                # dict['output_size'] = input_size
+                # model_info.append(dict)
+                Data_layer_name = layer.name
 
         if layer.type == 'DummyData':
             if layer.include[0].phase == phase:
-                dict['locate'] = True
-                dict['input_size'] = input_size
-                dict['output_size'] = input_size
-                model_info.append(dict)
+                # dict['locate'] = True
+                # dict['input_size'] = input_size
+                # dict['output_size'] = input_size
+                # model_info.append(dict)
+                Data_layer_name = layer.name
 
         elif layer.type == 'Input':
             dict['locate'] = True
@@ -199,10 +195,16 @@ def build_graph(net, input_size, phase):
         elif layer.type == 'Convolution':
 
             bottom = layer.bottom[0]
-            dict['input_name'].append(bottom)
-            bottom_layer = search_layer(model_info, bottom)
+            if bottom == Data_layer_name:
+                pass
+                dict['rank'] = 0
+                dict['input_size'] = input_size
+            else:
+                bottom_layer = search_layer(model_info, bottom)
+                bottom_layer['output_name'].append(layer.name)
+                dict['input_name'].append(bottom)
+                dict['input_size'] = bottom_layer['output_size']
 
-            bottom_layer['output_name'].append(layer.name)
 
             pad = 0
             kernel_size = 0
@@ -226,7 +228,7 @@ def build_graph(net, input_size, phase):
             dict['pad'] = pad
             dict['group'] = group
 
-            dict['input_size'] = bottom_layer['output_size']
+            # dict['input_size'] = bottom_layer['output_size']
             dict['num_output'] = num_output
             dict['output_size'], dict['pad_in'], dict['pad_whole'] = \
                 get_convolution_output_size(dict['input_size'], num_output, kernel_size, stride, pad)
@@ -355,10 +357,8 @@ net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
 # net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
 # net_file = caffe_root + 'models/default_vgg_19/train_val.prototxt'
 
-caffe_model_info = get_caffe_model(net_file, (3,224,224))
-caffe_node_info = convert_to_node(caffe_model_info)
-caffe_node_info = build_nodes(caffe_node_info)
+# net_file = caffe_root + 'models/dummy_data/default_resnet_train_val_dummy.prototxt'
 
-
-caffe_node_info = change_nodes_list(caffe_node_info)
+model_info = get_caffe_model(net_file, (3,224,224))
+node_info = get_node_list(model_info)
 print "1"

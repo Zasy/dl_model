@@ -1,3 +1,15 @@
+class Node(object):
+
+    def __init__(self, **param):
+        self.__dict__.update(param)
+
+def convert_to_node(model_info):
+    node_info = []
+    for i in range(0,len(model_info)):
+        temp_node = Node(**model_info[i])
+        node_info.append(temp_node)
+    return node_info
+
 def search_node(node_info, name):
     for i in range(0, len(node_info)):
         if node_info[i].name == name:
@@ -107,5 +119,67 @@ def change_nodes_list(node_info):
                         one_node.output_nodes[j] = one_node.output_nodes[j+1]
                         one_node.output_nodes[j+1] = tmp
     return node_info
+
+
+def find_end_point(node):
+    last_node = node.input_nodes[0] # the first node is the start node
+    while len(node.input_nodes) == 1  and len(node.output_nodes)  == 1:
+        last_node = node
+        node = node.output_nodes[0]
+
+    return node, last_node
+
+def delete_link(end_node, link_node):
+    input_set = end_node.input_nodes
+
+    for one_input in input_set:
+        if one_input != link_node:
+            # the output direct link to the last the point
+            one_input.output_nodes.remove(end_node)
+    end_node.input_nodes = [link_node]
+
+def change_order(node_info):
+
+    for one_node in node_info:
+        if len(one_node.output_nodes) > 1:
+            end_node, link_node = find_end_point(one_node.output_nodes[-1])
+            delete_link(end_node, link_node)
+
+    return node_info
+
+
+def get_first_node(node_info):
+    for one_node in node_info:
+        if one_node.rank == 0:
+            return one_node
+
+def get_all_node(input_node, node_list):
+    temp_node = input_node
+    node_list.append(temp_node)
+    while len(temp_node.output_nodes) != 0:
+        if len(temp_node.output_nodes) > 1:
+            for one_node in temp_node.output_nodes:
+                node_list = get_all_node(one_node, node_list)
+            break
+        else:
+            temp_node = temp_node.output_nodes[0]
+            node_list.append(temp_node)
+    return node_list
+
+def get_node_list(model_info):
+    node_info = convert_to_node(model_info)
+    node_info = build_nodes(node_info)
+    node_info = change_nodes_list(node_info)
+    node_info = change_order(node_info)
+    first_node = get_first_node(node_info)
+    node_list = []
+    node_list = get_all_node(first_node, node_list)
+    return node_list
+
+
+
+
+
+
 
 

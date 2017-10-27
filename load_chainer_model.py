@@ -1,6 +1,7 @@
 import chainer.links as L
 import alex
 import numpy as np
+import imp
 
 from chainer import function
 from chainer import variable
@@ -20,7 +21,7 @@ from chainer.functions.normalization.local_response_normalization import LocalRe
 from chainer.functions.array.concat import Concat
 from chainer.functions.math.basic_math import Add
 
-from rank_multi_port import build_nodes, change_nodes_list
+from rank_multi_port import get_node_list
 
 import googlenet
 import resnet
@@ -148,12 +149,16 @@ def build_input_output_name(model_info):
 #
 #     return node_info
 
-def get_chainer_model(model):
+def get_chainer_raw_model(chainer_file, class_name):
     # model = alex.Alex()
-    model = googlenet.GoogLeNet()
+    # model = googlenet.GoogLeNet()
     # model = resnet.ResNet()
     # model = resnet50.ResNet50()
-
+    file_name = chainer_file.split('/')[-1]
+    file_name = file_name.split('.')[0]
+    foo = imp.load_source(file_name, chainer_file)
+    class_ = getattr(foo, class_name)
+    model = class_()
     data = np.ndarray((128,3,model.insize,model.insize), dtype=np.float32)
     data.fill(3333)
 
@@ -275,15 +280,30 @@ def get_chainer_model(model):
     return node_info
 
 
-chainer_file = 'alex.py'
-chainer_model_info = get_chainer_model(chainer_file)
-chainer_model_info = build_input_output_name(chainer_model_info)
-chainer_node_info = convert_to_node(chainer_model_info)
+def get_chainer_model(chainer_file, input_size, class_name):
 
-chainer_node_info = build_nodes(chainer_node_info)
+    #chainer_file = 'alex.py'
+    model_info = get_chainer_raw_model(chainer_file, class_name)
+    model_info = build_input_output_name(model_info)
 
+    return model_info
+    # chainer_node_info = convert_to_node(chainer_model_info)
+    #
+    # chainer_node_info = build_nodes(chainer_node_info)
+    # chainer_node_info = change_nodes_list(chainer_node_info)
+    # chainer_node_info = change_order(chainer_node_info)
+    # chainer_first_node = get_first_node(chainer_node_info)
+    # node_list   = []
+    # node_list = get_all_node(chainer_first_node, node_list)
 
-chainer_node_info = change_nodes_list(chainer_node_info)
+# chainer_file = '/home/zhangge/pymodel/googlenet.py'
+chainer_file = '/home/zhangge/pymodel/resnet50.py'
+input_size = (3, 224, 224)
+# class_name = 'GoogLeNet'
+class_name = 'ResNet50'
+
+model_info = get_chainer_model(chainer_file, input_size, class_name)
+node_info = get_node_list(model_info)
 
 print "1"
 

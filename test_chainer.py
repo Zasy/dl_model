@@ -1,3 +1,6 @@
+import os
+os.environ["CHAINER_TYPE_CHECK"] = "0"
+
 import alex
 from chainer import Variable
 import numpy as np
@@ -6,6 +9,7 @@ import chainer.links as L
 import googlenet
 import resnet
 import resnet50
+import train_googlenet
 
 
 def props(obj):
@@ -17,10 +21,11 @@ def props(obj):
     return pr
 
 
-model = alex.Alex()
+# model = alex.Alex()
 # model = googlenet.GoogLeNet()
 # model = resnet.ResNet()
 # model = resnet50.ResNet50()
+model = train_googlenet.GoogLeNet()
 
 x = Variable(np.array([[1, 2, 3], [4, 5, 6]], dtype=np.float32))
 f = L.Linear(3, 2)
@@ -33,7 +38,10 @@ data.fill(3333)
 label = np.ndarray((128), dtype=np.int32)
 label.fill(1)
 x = np.asarray(data)
-g = c.build_computational_graph(model.forward(x), remove_variable=False)
+y = np.asarray(label)
+outputs = model(x,y)
+# inputs = outputs.node.creator.inputs
+g = c.build_computational_graph([outputs,])
 with open('./test_new', 'w') as o:
     o.write(g.dump())
 

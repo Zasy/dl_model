@@ -4,6 +4,7 @@ autuor: ZheZhan
 '''
 
 import numpy as np
+import caffe
 import sys,os
 import caffe.proto.caffe_pb2 as caffe_pb2
 import math
@@ -326,7 +327,7 @@ def del_node(model_info):
     return model_info
 
 
-def get_caffe_model(net_file, input_size):
+def get_caffe_model(net_file):
 
     caffe_root = '/home/zhangge/caffe/'
     # os.chdir(caffe_root)
@@ -335,11 +336,13 @@ def get_caffe_model(net_file, input_size):
     # net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
     # net_file = caffe_root + 'models/default_vgg_19/train_val.prototxt'
 
+    net_model = caffe.Net(net_file, caffe.TRAIN)
+    input_size = net_model.blobs['data'].data.shape[1:]
     net = caffe_pb2.NetParameter()
     f = open(net_file, 'r')
     text_format.Merge(f.read(), net)
     phase = caffe_pb2.Phase.Value('TRAIN')
-    input_size = (3, 224, 224)
+    #input_size = (3, 224, 224)
     model_info = build_graph(net, input_size, phase)
     model_info = del_node(model_info)
     # node_info = convert_to_node(model_info)
@@ -356,9 +359,7 @@ os.chdir(caffe_root)
 net_file = caffe_root + 'models/bvlc_googlenet/train_val.prototxt'
 # net_file = caffe_root + 'models/default_resnet_50/train_val.prototxt'
 # net_file = caffe_root + 'models/default_vgg_19/train_val.prototxt'
-
 # net_file = caffe_root + 'models/dummy_data/default_resnet_train_val_dummy.prototxt'
 
-model_info = get_caffe_model(net_file, (3,224,224))
+model_info = get_caffe_model(net_file)
 node_info = get_node_list(model_info)
-print "1"

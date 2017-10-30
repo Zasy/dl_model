@@ -1,39 +1,38 @@
-import chainer.links as L
-import alex
+import os
+os.environ["CHAINER_TYPE_CHECK"] = "0"
+
+
 import numpy as np
 import imp
 
-from chainer import function
-from chainer import variable
-from chainer.functions.array.get_item import GetItem
+# from chainer import function
+# from chainer import variable
+# from chainer.functions.array.get_item import GetItem
 from chainer.functions.connection.convolution_2d import Convolution2DFunction
 from chainer.functions.pooling.average_pooling_2d import AveragePooling2D
 from chainer.functions.pooling.max_pooling_2d import MaxPooling2D
-#from chainer.functions.normalization.batch_normalization import BatchNormalizationFunction
-from chainer.functions.array.reshape import Reshape
-from chainer.functions.activation.relu import ReLU
-from chainer.functions.noise.dropout import Dropout
-from chainer.functions.noise.gaussian import Gaussian
-from chainer.functions.activation.sigmoid import Sigmoid
+from chainer.functions.loss.softmax_cross_entropy import SoftmaxCrossEntropy
+from chainer.functions.loss.sigmoid_cross_entropy import SigmoidCrossEntropy
+# from chainer.functions.normalization.batch_normalization import BatchNormalizationFunction
+# from chainer.functions.array.reshape import Reshape
+# from chainer.functions.activation.relu import ReLU
+# from chainer.functions.noise.dropout import Dropout
+# from chainer.functions.noise.gaussian import Gaussian
+# from chainer.functions.activation.sigmoid import Sigmoid
 from chainer.functions.connection.linear import LinearFunction
 from chainer.functions.normalization.local_response_normalization import LocalResponseNormalization
-
 from chainer.functions.array.concat import Concat
 from chainer.functions.math.basic_math import Add
-
 from rank_multi_port import get_node_list
-
-import googlenet
-import resnet
-import resnet50
 
 
 #delete_node_set = [ReLU, Dropout, Reshape, BatchNormalizationFunction]
 
 build_node_set = [MaxPooling2D, AveragePooling2D, Convolution2DFunction, LinearFunction, Concat, Add]
+end_node_set = [SigmoidCrossEntropy, SoftmaxCrossEntropy]
 
-functionnode = []
-model_info = []
+
+
 
 
 class Node(object):
@@ -102,19 +101,13 @@ def isdelnode(func_node):
             return False
     return True
 
-def add_inputnode(one_var):
-    temp_output_nodes = one_var
-    if temp_output_nodes.creator and temp_output_nodes.creator not in functionnode:
-        temp_func_node = temp_output_nodes.creator
-        temp_func_node.input_nodes = []
-        temp_func_node.output_nodes = []
+def isendnode(func_node):
+    for i in end_node_set:
+        if isinstance(func_node, i):
+            return True
 
-        for one_input in temp_func_node.inputs:
-            if one_input.creator:
-                temp_func_node.input_nodes.append(one_input.creator)
-        functionnode.append(temp_func_node)
-        for one_var in temp_func_node.inputs:
-            add_inputnode(one_var)
+    return False
+
 
 def build_input_output_name(model_info):
     for one_node in model_info:
@@ -130,6 +123,7 @@ def build_input_output_name(model_info):
         one_node['output_name'] = output_name
 
     return model_info
+
 
 # def build_nodes(node_info):
 #
@@ -149,6 +143,7 @@ def build_input_output_name(model_info):
 #
 #     return node_info
 
+
 def get_chainer_raw_model(chainer_file, class_name):
     # model = alex.Alex()
     # model = googlenet.GoogLeNet()
@@ -166,22 +161,54 @@ def get_chainer_raw_model(chainer_file, class_name):
     label.fill(1)
 
     x = np.asarray(data)
+    y = np.asarray(label)
+    outputs = model(x, y)
 
-    outputs = model.forward(x)
-    output_set = []
+    output_node = []
+
+    def get_output_node(one_var):
+        temp_var = one_var
+
+        if temp_var.creator and (not isendnode(temp_var.creator)):
+            for one_var in temp_var.creator.inputs:
+                get_output_node(one_var)
+
+        elif temp_var.creator and (isendnode(temp_var.creator)):
+
+            output_node.append(temp_var.creator.inputs[0])
+
+    get_output_node(outputs)
+    output_set = output_node
 
     # delete the getitem problom
     # and get the output_set
-    for o in outputs:
-        if isinstance(o, variable.Variable):
-            o = o.node
-        while isinstance(o.creator, GetItem):
-            o = o.creator.inputs[0]
-        if o not in output_set:
-            output_set.append(o)
+    # for o in outputs:
+    #     if isinstance(o, variable.Variable):
+    #         o = o.node
+    #     while isinstance(o.creator, GetItem):
+    #         o = o.creator.inputs[0]
+    #     if o not in output_set:
+    #         output_set.append(o)
     # get every node from the out of forward
+    functionnode = []
+
+    def add_inputnode(one_var):
+        temp_output_nodes = one_var
+        if temp_output_nodes.creator and temp_output_nodes.creator not in functionnode:
+            temp_func_node = temp_output_nodes.creator
+            temp_func_node.input_nodes = []
+            temp_func_node.output_nodes = []
+
+            for one_input in temp_func_node.inputs:
+                if one_input.creator:
+                    temp_func_node.input_nodes.append(one_input.creator)
+            functionnode.append(temp_func_node)
+            for one_var in temp_func_node.inputs:
+                add_inputnode(one_var)
+
     for one_out in output_set:
         add_inputnode(one_out)
+
     # build the output_nodes
     for one_node in functionnode:
         temp_output_nodes = []
@@ -206,14 +233,26 @@ def get_chainer_raw_model(chainer_file, class_name):
             input_node = one_func_node.input_nodes[0]
             output_nodes = one_func_node.output_nodes
             input_node.output_nodes = output_nodes
-            for one_out in output_nodes:
-                one_out.input_nodes = one_func_node.input_nodes
+
+            # for one_out in output_nodes:
+            #     # one_out.input_nodes = one_func_node.input_nodes
+            #     try:
+            #         one_out.input_nodes.remove(one_func_node)
+            #
+            #     except:
+            #         print "Error"
+            #     one_out.input_nodes.append(one_func_node.input_nodes)
+            for i in range(0,len(output_nodes)):
+                try:
+                    output_nodes[i].input_nodes.remove(one_func_node)
+                except:
+                    print "Error"
+                output_nodes[i].input_nodes.append(input_node)
+
             continue
         new_func_nodes.append(one_func_node)
 
 
-    # first_node = get_rank0(new_func_nodes)
-    # get_all_node(first_node)
     node_info = []
     for one_node in new_func_nodes:
         dict = {}
@@ -223,6 +262,7 @@ def get_chainer_raw_model(chainer_file, class_name):
         dict['node'] = one_node
         dict['input_size'] = one_node.inputs[0].shape[1:]
         if isinstance(one_node, Convolution2DFunction):
+            dict['group'] = 1
             dict['type'] = 'Convolution'
             dict['pad'] = one_node.ph
             dict['stride'] = one_node.sx
@@ -280,31 +320,22 @@ def get_chainer_raw_model(chainer_file, class_name):
     return node_info
 
 
-def get_chainer_model(chainer_file, input_size, class_name):
+def get_chainer_model(chainer_file, class_name):
 
     #chainer_file = 'alex.py'
+
     model_info = get_chainer_raw_model(chainer_file, class_name)
     model_info = build_input_output_name(model_info)
 
     return model_info
-    # chainer_node_info = convert_to_node(chainer_model_info)
-    #
-    # chainer_node_info = build_nodes(chainer_node_info)
-    # chainer_node_info = change_nodes_list(chainer_node_info)
-    # chainer_node_info = change_order(chainer_node_info)
-    # chainer_first_node = get_first_node(chainer_node_info)
-    # node_list   = []
-    # node_list = get_all_node(chainer_first_node, node_list)
 
-# chainer_file = '/home/zhangge/pymodel/googlenet.py'
-chainer_file = '/home/zhangge/pymodel/resnet50.py'
-input_size = (3, 224, 224)
-# class_name = 'GoogLeNet'
-class_name = 'ResNet50'
-
-model_info = get_chainer_model(chainer_file, input_size, class_name)
-node_info = get_node_list(model_info)
-
-print "1"
+# # chainer_file = '/Users/Mac/zhanGGe/dl_model/train_googlenet.py'
+# chainer_file = '/Users/Mac/zhanGGe/dl_model/resnet50.py'
+# input_size = (3, 224, 224)
+# # class_name = 'GoogLeNet'
+# class_name = 'ResNet50'
+#
+# model_info = get_chainer_model(chainer_file, class_name)
+# node_info = get_node_list(model_info)
 
 

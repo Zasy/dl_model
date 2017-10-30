@@ -35,7 +35,7 @@ class BottleNeckA(chainer.Chain):
         h1 = self.bn3(self.conv3(h1))
         h2 = self.bn4(self.conv4(x))
 
-        return F.relu(h2 + h1)
+        return F.relu(h1 + h2)
 
 
 class BottleNeckB(chainer.Chain):
@@ -60,7 +60,7 @@ class BottleNeckB(chainer.Chain):
         h = F.relu(self.bn2(self.conv2(h)))
         h = self.bn3(self.conv3(h))
 
-        return F.relu(x + h)
+        return F.relu(h + x)
 
 
 class Block(chainer.ChainList):
@@ -90,20 +90,20 @@ class ResNet50(chainer.Chain):
             self.bn1 = L.BatchNormalization(64)
             self.res2 = Block(3, 64, 64, 256, 1)
             self.res3 = Block(4, 256, 128, 512)
-            # self.res4 = Block(6, 512, 256, 1024)
-            # self.res5 = Block(3, 1024, 512, 2048)
-            self.fc = L.Linear(512, 1000)
+            self.res4 = Block(6, 512, 256, 1024)
+            self.res5 = Block(3, 1024, 512, 2048)
+            self.fc = L.Linear(2048, 1000)
 
-    def forward(self, x):
+    def __call__(self, x, t):
         h = self.bn1(self.conv1(x))
         h = F.max_pooling_2d(F.relu(h), 3, stride=2)
         h = self.res2(h)
         h = self.res3(h)
-        # h = self.res4(h)
-        # h = self.res5(h)
-        # h = F.average_pooling_2d(h, 7, stride=1)
+        h = self.res4(h)
+        h = self.res5(h)
+        h = F.average_pooling_2d(h, 7, stride=1)
         h = self.fc(h)
 
-        #loss = F.softmax_cross_entropy(h, t)
-        #chainer.report({'loss': loss, 'accuracy': F.accuracy(h, t)}, self)
-        return h
+        loss = F.softmax_cross_entropy(h, t)
+        chainer.report({'loss': loss, 'accuracy': F.accuracy(h, t)}, self)
+        return loss

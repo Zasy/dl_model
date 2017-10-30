@@ -19,6 +19,7 @@ class exitMessage(object):
         self.type = type
         #self.param = param
 
+
 class sizeMessage(object):
 
     def __init__(self, index, node_a, node_b, type):

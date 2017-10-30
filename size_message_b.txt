@@ -1,7 +1,0 @@
-(Convolution2DFunction/0/17)Convolution: (shape=(64, 55, 55), k=11, s=4, p=2, p_in=(3, 227, 227), p_whole=(3, 228, 228))
-(MaxPooling2D/2/15)Pooling: (shape=(64, 27, 27), k=3, s=2, p=0, p_in=(64, 55, 55), p_whole=(64, 55, 55))
-(Convolution2DFunction/3/14)Convolution: (shape=(192, 27, 27), k=5, s=1, p=2, p_in=(64, 31, 31), p_whole=(64, 31, 31))
-(MaxPooling2D/5/12)Pooling: (shape=(192, 13, 13), k=3, s=2, p=0, p_in=(192, 27, 27), p_whole=(192, 27, 27))
-(Convolution2DFunction/6/11)Convolution: (shape=(384, 13, 13), k=3, s=1, p=1, p_in=(192, 15, 15), p_whole=(192, 15, 15))
-(Convolution2DFunction/8/9)Convolution: (shape=(256, 13, 13), k=3, s=1, p=1, p_in=(384, 15, 15), p_whole=(384, 15, 15))
-(Convolution2DFunction/10/7)Convolution: (shape=(256, 13, 13), k=3, s=1, p=1, p_in=(256, 15, 15), p_whole=(256, 15, 15))

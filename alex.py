@@ -18,7 +18,7 @@ class Alex(chainer.Chain):
             fc8=L.Linear(4096, 1000),
         )
 
-    def forward(self, x):
+    def __call__(self, x, t):
         h = F.max_pooling_2d(F.relu(self.conv1(x)), 3, stride=2)
         h = F.max_pooling_2d(F.relu(self.conv2(h)), 3, stride=2)
         h = F.relu(self.conv3(h))
@@ -26,5 +26,9 @@ class Alex(chainer.Chain):
         h = F.max_pooling_2d(F.relu(self.conv5(h)), 3, stride=2)
         h = F.relu(self.fc6(h))
         h = F.relu(self.fc7(h))
-        out = self.fc8(h)
-        return out
+        h = self.fc8(h)
+
+        loss = F.softmax_cross_entropy(h, t)
+        chainer.report({'loss': loss, 'accurary': F.accuracy(h,t)}, self)
+
+        return loss

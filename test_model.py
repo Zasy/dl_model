@@ -1,4 +1,4 @@
-'''
+ '''
 dl_model:2017/08/17
 autuor: ZheZhan
 '''
@@ -650,6 +650,8 @@ class exitMessage(object):
         self.type = type
         self.a_index = a_index
         self.b_index = b_index
+
+
 
 class sizeMessage(object):
 

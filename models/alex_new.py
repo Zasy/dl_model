@@ -23,7 +23,7 @@ class Alex(chainer.Chain):
         h = F.max_pooling_2d(F.relu(self.conv2(h)), 3, stride=2)
         h = F.relu(self.conv3(h))
         h = F.relu(self.conv4(h))
-        h = F.max_pooling_2d(F.relu(self.conv5(h)), 3, stride=2)
+        h = F.max_pooling_2d(F.relu(self.conv5(h)), 2, stride=2, cover_all=False)
         h = F.relu(self.fc6(h))
         h = F.relu(self.fc7(h))
         h = self.fc8(h)

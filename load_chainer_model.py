@@ -180,16 +180,6 @@ def get_chainer_raw_model(chainer_file, class_name):
     get_output_node(outputs)
     output_set = output_node
 
-    # delete the getitem problom
-    # and get the output_set
-    # for o in outputs:
-    #     if isinstance(o, variable.Variable):
-    #         o = o.node
-    #     while isinstance(o.creator, GetItem):
-    #         o = o.creator.inputs[0]
-    #     if o not in output_set:
-    #         output_set.append(o)
-    # get every node from the out of forward
     functionnode = []
 
     def add_inputnode(one_var):
@@ -219,12 +209,28 @@ def get_chainer_raw_model(chainer_file, class_name):
 
     # get the name format of node and build the scan order.
     for one_func_node in functionnode:
-        one_func_node.name = one_func_node.label + '/' + str(one_func_node.rank) + '/' + str(
+        if isinstance(one_func_node, Convolution2DFunction):
+            one_func_node.name = 'conv' + '_' + str(one_func_node.rank) + '_' + str(
             functionnode.index(one_func_node))
-    #     if len(one_func_node.input_nodes) > 1:
-    #         for i in range(0,len(one_func_node.input_nodes) - 1):
-    #             one_func_node.input_nodes[i].output_nodes.remove(one_func_node)
-    #         one_func_node.input_nodes = [one_func_node.input_nodes[-1]]
+        elif isinstance(one_func_node, MaxPooling2D):
+            one_func_node.name = 'pool' + '_' + str(one_func_node.rank) + '_' + str(
+            functionnode.index(one_func_node))
+        elif isinstance(one_func_node, AveragePooling2D):
+            one_func_node.name = 'pool' + '_' + str(one_func_node.rank) + '_' + str(
+            functionnode.index(one_func_node))
+        elif isinstance(one_func_node, Add):
+            one_func_node.name = 'add' + '_' + str(one_func_node.rank) + '_' + str(
+            functionnode.index(one_func_node))
+        elif isinstance(one_func_node, Concat):
+            one_func_node.name = 'concat' + '_' + str(one_func_node.rank) + '_' + str(
+                functionnode.index(one_func_node))
+        elif isinstance(one_func_node, LinearFunction):
+            one_func_node.name = 'fc' + '_' + str(one_func_node.rank) + '_' + str(
+                functionnode.index(one_func_node))
+        else:
+            one_func_node.name = str(one_func_node.rank) + '_' + str(
+                functionnode.index(one_func_node))
+
 
     new_func_nodes = []
     for one_func_node in functionnode:
@@ -234,14 +240,6 @@ def get_chainer_raw_model(chainer_file, class_name):
             output_nodes = one_func_node.output_nodes
             input_node.output_nodes = output_nodes
 
-            # for one_out in output_nodes:
-            #     # one_out.input_nodes = one_func_node.input_nodes
-            #     try:
-            #         one_out.input_nodes.remove(one_func_node)
-            #
-            #     except:
-            #         print "Error"
-            #     one_out.input_nodes.append(one_func_node.input_nodes)
             for i in range(0,len(output_nodes)):
                 try:
                     output_nodes[i].input_nodes.remove(one_func_node)
@@ -266,14 +264,20 @@ def get_chainer_raw_model(chainer_file, class_name):
             dict['type'] = 'Convolution'
             dict['pad'] = one_node.ph
             dict['stride'] = one_node.sx
+            dict['ph'] = one_node.ph
+            dict['pw'] = one_node.pw
+            dict['sh'] = one_node.sy
+            dict['sw'] = one_node.sx
+            dict['kh'] = one_node.inputs[1].shape[2]
+            dict['kw'] = one_node.inputs[1].shape[3]
             # get the kernel_size from the weight variable
             dict['kernel_size'] = one_node.inputs[1].shape[3]
-            dict['num_of_output'] = one_node.inputs[1].shape[0]
+            dict['num_output'] = one_node.inputs[1].shape[0]
             cover_all = one_node.cover_all
             dict['cover_all'] = cover_all
             dict['output_size'], dict['pad_whole'], dict['pad_in'] = \
                 get_chainer_convolution_output(dict['input_size'],
-                                               dict['num_of_output'],
+                                               dict['num_output'],
                                                dict['kernel_size'],
                                                dict['pad'],
                                                dict['stride'],
@@ -286,12 +290,20 @@ def get_chainer_raw_model(chainer_file, class_name):
             dict['pad'] = one_node.ph
             dict['stride'] = one_node.sx
             dict['kernel_size'] = one_node.kh
-            dict['num_of_output'] = one_node.inputs[0].shape[1]
+
+            dict['ph'] = one_node.ph
+            dict['pw'] = one_node.pw
+            dict['sh'] = one_node.sy
+            dict['sw'] = one_node.sx
+            dict['kh'] = one_node.kh
+            dict['kw'] = one_node.kw
+
+            dict['num_output'] = one_node.inputs[0].shape[1]
             cover_all = one_node.cover_all
             dict['cover_all'] = cover_all
             dict['output_size'], dict['pad_whole'], dict['pad_in'] = \
                 get_chainer_convolution_output(dict['input_size'],
-                                               dict['num_of_output'],
+                                               dict['num_output'],
                                                dict['kernel_size'],
                                                dict['pad'],
                                                dict['stride'],
@@ -308,6 +320,10 @@ def get_chainer_raw_model(chainer_file, class_name):
                 temp_output_size[0] += one_input_var.shape[1]
                 dict['output_size'] = tuple(temp_output_size)
         elif isinstance(one_node, LinearFunction):
+            temp_input_size = 1
+            for i in dict['input_size']:
+                temp_input_size *= i
+            dict['input_size'] = (temp_input_size,)
             dict['type'] = 'InnerProduct'
             dict['output_size'] = (one_node.inputs[2].shape[0],)
 
@@ -322,18 +338,17 @@ def get_chainer_raw_model(chainer_file, class_name):
 
 def get_chainer_model(chainer_file, class_name):
 
-    #chainer_file = 'alex.py'
 
     model_info = get_chainer_raw_model(chainer_file, class_name)
     model_info = build_input_output_name(model_info)
 
-    return model_info
+    return model_info[::-1]
 
 # # chainer_file = '/Users/Mac/zhanGGe/dl_model/train_googlenet.py'
 # chainer_file = '/Users/Mac/zhanGGe/dl_model/resnet50.py'
-# input_size = (3, 224, 224)
+# chainer_file = '/home/zhangge/pymodel/alex_new.py'
 # # class_name = 'GoogLeNet'
-# class_name = 'ResNet50'
+# class_name = 'Alex'
 #
 # model_info = get_chainer_model(chainer_file, class_name)
 # node_info = get_node_list(model_info)
